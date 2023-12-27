@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">AchillesZiekenhuis</string>
+    <string name="start_screen_title">Start</string>
+    <string name="about_screen_title">About</string>
+    <string name="appointment_screen_title">Afspraak maken</string>
+    <string name="login_screen_title">Log in</string>
+    <string name="BASE_URL">http://10.0.2.2:9000/api/</string>
+    <string name="afdelingen_screen_title">Afdelingen</string>
+</resources>
