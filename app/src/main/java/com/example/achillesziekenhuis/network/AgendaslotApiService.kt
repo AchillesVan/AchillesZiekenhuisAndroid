@@ -9,6 +9,9 @@ import retrofit2.http.Path
 
 interface AgendaslotApiService {
 
+    @GET("agendaslots/daily")
+    suspend fun getAgendaslotsDaily(): List<ApiListAgendaslot>
+
     @GET("agendaslots/rrn/{rijksregisternummer}")
     suspend fun getAgendaslotsByRRN(@Path("rijksregisternummer") rijksregisternummer: String): List<ApiAgendaslot>
 
@@ -17,6 +20,10 @@ interface AgendaslotApiService {
 
     @POST("agendaslots")
     suspend fun postAgendaslot(agendaslot: Agendaslot)
+}
+
+fun AgendaslotApiService.getAgendaslotsDailyAsFlow(): Flow<List<ApiListAgendaslot>> = flow {
+    emit(getAgendaslotsDaily())
 }
 
 fun AgendaslotApiService.getAgendaslotsByRRNAsFlow(rijksregisternummer: String): Flow<List<ApiAgendaslot>> = flow {

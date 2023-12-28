@@ -54,7 +54,6 @@ fun LoginScreen(
                     viewModel.onLogin(
                         context = context,
                         auth = auth,
-                        setBearerToken = viewModel::setBearerToken,
                         setUser = viewModel::setUser,
                         onSuccessNavigation = {
                             navController.navigate(DokterOverviewScreen.Start.name)

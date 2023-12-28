@@ -9,3 +9,8 @@ class Agendaslot(
     var startTijd: LocalDateTime = LocalDateTime.now(),
     var eindTijd: LocalDateTime = LocalDateTime.now(),
 )
+
+class ListAgendaslot(
+    var value: String = "",
+    var label: String = "",
+)

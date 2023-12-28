@@ -2,6 +2,7 @@ package com.example.achillesziekenhuis.network
 
 import com.example.achillesziekenhuis.model.Agendaslot
 import com.example.achillesziekenhuis.model.Dokter
+import com.example.achillesziekenhuis.model.ListAgendaslot
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
@@ -36,6 +37,27 @@ fun List<ApiAgendaslot>.asDomainObjects(): List<Agendaslot> {
 fun Flow<List<ApiAgendaslot>>.asDomainObjects(): Flow<List<Agendaslot>> {
     var domainList = this.map {
         it.asDomainObjects()
+    }
+    return domainList
+}
+
+
+@Serializable
+data class ApiListAgendaslot(
+    var value: String = "",
+    var label: String = "",
+)
+
+fun ApiListAgendaslot.asDomainObject(): ListAgendaslot {
+    return ListAgendaslot(
+        this.value,
+        this.label,
+    )
+}
+
+fun List<ApiListAgendaslot>.asDomainObjects(): List<ListAgendaslot> {
+    var domainList = this.map {
+        it.asDomainObject()
     }
     return domainList
 }

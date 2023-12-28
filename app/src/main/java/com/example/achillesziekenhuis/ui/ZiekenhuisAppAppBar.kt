@@ -16,8 +16,8 @@ import androidx.compose.ui.res.stringResource
 @Composable
 fun ZiekenhuisAppAppBar(
     canNavigateBack: Boolean,
-    navigateUp: () -> Unit = {},
-    currentScreenTitle: Int,
+    navigateUp: () -> Unit,
+    currentScreenTitle: String,
 ) {
     TopAppBar(
         colors = TopAppBarDefaults.smallTopAppBarColors(
@@ -25,7 +25,7 @@ fun ZiekenhuisAppAppBar(
             titleContentColor = MaterialTheme.colorScheme.primary,
         ),
         title = {
-            Text(stringResource(id = currentScreenTitle))
+            Text(text = currentScreenTitle)
         },
         navigationIcon = {
             if (canNavigateBack) {

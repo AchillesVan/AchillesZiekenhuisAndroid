@@ -1,11 +1,11 @@
 package com.example.achillesziekenhuis.ui.navigation
 
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.achillesziekenhuis.ui.aboutPage.AboutPage
 import com.example.achillesziekenhuis.ui.afspraakOverview.AfspraakOverview
 import com.example.achillesziekenhuis.ui.dokterOverview.DokterOverview
 import com.example.achillesziekenhuis.ui.login.LoginScreen
@@ -20,6 +20,20 @@ fun navComponent(
         startDestination = DokterOverviewScreen.Login.name,
         modifier = modifier,
     ) {
+
+        val canNavigateBack = navController.previousBackStackEntry?.destination?.route != DokterOverviewScreen.Login.name
+                && navController.currentBackStackEntry?.destination?.route != DokterOverviewScreen.Login.name
+
+        val navigateUp: () -> Unit = { navController.navigateUp() }
+
+        val goHome: () -> Unit = {
+            navController.popBackStack(
+                DokterOverviewScreen.Start.name,
+                inclusive = false,
+            )
+        }
+        val goToAbout = { navController.navigate(DokterOverviewScreen.About.name) }
+
         composable(
             route = DokterOverviewScreen.Login.name,
         ) {
@@ -29,19 +43,32 @@ fun navComponent(
             route = DokterOverviewScreen.Start.name,
         ) {
             DokterOverview(
+                canNavigateBack = canNavigateBack,
+                navigateUp = navigateUp,
+                goHome = goHome,
+                goToAbout = goToAbout,
                 navigate = navController::navigate,
-            )
+                )
         }
         composable(
             route = DokterOverviewScreen.About.name,
         ) {
-            Text("About")
+            AboutPage(
+                canNavigateBack = canNavigateBack,
+                navigateUp = navigateUp,
+                goHome = goHome,
+                goToAbout = goToAbout,
+            )
         }
         composable(
             route = "${DokterOverviewScreen.Appointment.name}/{rizivNummer}",
         ) {
             AfspraakOverview(
                 rizivNummer = it.arguments?.getString("rizivNummer") ?: "",
+                canNavigateBack = canNavigateBack,
+                navigateUp = navigateUp,
+                goHome = goHome,
+                goToAbout = goToAbout,
             )
         }
     }

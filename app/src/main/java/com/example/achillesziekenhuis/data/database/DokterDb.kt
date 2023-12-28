@@ -7,12 +7,14 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import java.util.concurrent.Executors
 
-@Database(entities = [DbDokter::class, DbAgendaslot::class], version = 1, exportSchema = false)
+@Database(entities = [DbDokter::class, DbAgendaslot::class, DbGebruiker::class], version = 2, exportSchema = false)
 abstract class DokterDb : RoomDatabase() {
 
     abstract fun dokterDao(): DokterDao
 
     abstract fun agendaslotDao(): AgendaslotDao
+
+    abstract fun gebruikerDao(): GebruikerDao
 
     companion object {
         @Volatile
@@ -22,6 +24,7 @@ abstract class DokterDb : RoomDatabase() {
             // if the Instance is not null, return it, otherwise create a new database instance.
             return Instance ?: synchronized(this) {
                 Room.databaseBuilder(context, DokterDb::class.java, "dokter_database")
+                    .fallbackToDestructiveMigration()
                     .build()
                     .also { Instance = it }
             }

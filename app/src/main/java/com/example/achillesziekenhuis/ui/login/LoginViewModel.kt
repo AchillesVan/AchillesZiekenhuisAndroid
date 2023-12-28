@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.auth0.android.Auth0
@@ -15,11 +16,10 @@ import com.auth0.android.provider.WebAuthProvider
 import com.auth0.android.result.Credentials
 import com.example.achillesziekenhuis.DoktersApplication
 import com.example.achillesziekenhuis.R
-import com.example.achillesziekenhuis.model.User
+import com.example.achillesziekenhuis.model.Auth0User
 
 class LoginViewModel(
-    val setBearerTokenCallback: (String) -> Unit,
-    val setUserCallback: (User) -> Unit,
+    val setUserCallback: (Auth0User) -> Unit,
 ): ViewModel() {
 
     var userIsAuthenticated: Boolean by mutableStateOf(false)
@@ -29,10 +29,9 @@ class LoginViewModel(
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 if (Instance == null) {
-                    val application = (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as DoktersApplication)
+                    val application = (this[APPLICATION_KEY] as DoktersApplication)
 
                     Instance = LoginViewModel(
-                        setBearerTokenCallback = application.container::setBearerToken,
                         setUserCallback = application.container::setUser,
                     )
                 }
@@ -41,7 +40,7 @@ class LoginViewModel(
         }
     }
 
-    fun onLogin(context: Context, auth: Auth0, setBearerToken: (String) -> Unit, setUser: (User) -> Unit, onSuccessNavigation: () -> Unit) {
+    fun onLogin(context: Context, auth: Auth0,  setUser: (Auth0User) -> Unit, onSuccessNavigation: () -> Unit) {
         WebAuthProvider
             .login(auth)
             .withScheme(context.getString(R.string.com_auth0_scheme))
@@ -54,9 +53,8 @@ class LoginViewModel(
 
                     override fun onSuccess(result: Credentials) {
                         val accessToken = result.accessToken
-                        val user = User(accessToken)
-                        setBearerToken(accessToken)
-                        setUser(user)
+                        val auth0User = Auth0User(accessToken)
+                        setUser(auth0User)
                         userIsAuthenticated = true
                         onSuccessNavigation()
                     }
@@ -81,12 +79,7 @@ class LoginViewModel(
             )
     }
 
-
-    fun setBearerToken(s: String) {
-        setBearerTokenCallback(s)
-    }
-
-    fun setUser(user: User) {
-        setUserCallback(user)
+    fun setUser(auth0User: Auth0User) {
+        setUserCallback(auth0User)
     }
 }

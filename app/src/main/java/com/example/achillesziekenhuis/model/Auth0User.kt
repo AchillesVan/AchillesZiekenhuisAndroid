@@ -3,7 +3,7 @@ package com.example.achillesziekenhuis.model
 import android.util.Log
 import com.auth0.android.jwt.JWT
 
-data class User(val idToken: String? = null) {
+data class Auth0User(val idToken: String? = null) {
 
     private val TAG = "User"
 

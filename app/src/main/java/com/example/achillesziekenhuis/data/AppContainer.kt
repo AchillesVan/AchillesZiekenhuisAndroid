@@ -3,9 +3,10 @@ package com.example.achillesziekenhuis.data
 import android.content.Context
 import com.example.achillesziekenhuis.R
 import com.example.achillesziekenhuis.data.database.DokterDb
-import com.example.achillesziekenhuis.model.User
+import com.example.achillesziekenhuis.model.Auth0User
 import com.example.achillesziekenhuis.network.AgendaslotApiService
 import com.example.achillesziekenhuis.network.DokterApiService
+import com.example.achillesziekenhuis.network.GebruikerApiService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
@@ -18,15 +19,15 @@ import retrofit2.Retrofit
 interface AppContainer {
     val doktersRepository: DoktersRepository
     val agendaslotRepository: AgendaslotRepository
-    fun setBearerToken(token: String)
-    fun setUser(user: User)
+    val gebruikersRepository: GebruikersRepository
+    fun setUser(auth0User: Auth0User)
+    fun getAuth0Id(): String
 }
 
 class DefaultAppContainer(private val context: Context) : AppContainer {
 
     private val BASE_URL = context.getString(R.string.BASE_URL)
-    private var bearerToken: String? = null
-    private  var user: User? = null
+    private  var auth0User: Auth0User? = null
 
     private val retrofit = Retrofit.Builder()
         .addConverterFactory(
@@ -42,6 +43,10 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
 
     private val retrofitAgendaslotService: AgendaslotApiService by lazy {
         retrofit.create(AgendaslotApiService::class.java)
+    }
+
+    private val retrofitGebruikerService: GebruikerApiService by lazy {
+        retrofit.create(GebruikerApiService::class.java)
     }
 
     override val doktersRepository: DoktersRepository by lazy {
@@ -60,12 +65,20 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
         )
     }
 
-    override fun setBearerToken(token: String) {
-        this.bearerToken = token
+    override val gebruikersRepository: GebruikersRepository by lazy {
+        CachingGebruikersRepository(
+            DokterDb.getDatabase(context = context).gebruikerDao(),
+            retrofitGebruikerService,
+            context,
+        )
     }
 
-    override fun setUser(user: User) {
-        this.user = user
+    override fun setUser(auth0User: Auth0User) {
+        this.auth0User = auth0User
+    }
+
+    override fun getAuth0Id(): String {
+        return auth0User?.id.toString()
     }
 
     private fun createOkHttpClient(): OkHttpClient {
@@ -79,7 +92,7 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
             val original: Request = chain.request()
             val requestBuilder: Request.Builder = original.newBuilder()
 
-            bearerToken?.let {
+            auth0User?.idToken.let {
                 requestBuilder.header("Authorization", "Bearer $it")
             }
 

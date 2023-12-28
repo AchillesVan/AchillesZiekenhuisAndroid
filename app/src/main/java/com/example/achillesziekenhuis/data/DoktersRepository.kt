@@ -54,10 +54,6 @@ class CachingDokterRepository(
         // when empty --> tries to fetch from API
         return dokterDao.getAllDokters().map {
             it.asDomainDokters()
-        }.onEach {
-            if (it.isEmpty()) {
-                refresh()
-            }
         }
     }
 
@@ -106,9 +102,9 @@ class CachingDokterRepository(
         try {
             dokterApiService.getDoktersAsFlow().asDomainObjects().collect {
                     value ->
-                for (task in value) {
+                for (dokter in value) {
                     Log.i("TEST", "refresh: $value")
-                    insertDokter(task)
+                    insertDokter(dokter)
                 }
             }
         } catch (e: SocketTimeoutException) {

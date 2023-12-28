@@ -11,13 +11,16 @@ import com.example.achillesziekenhuis.data.database.AgendaslotDao
 import com.example.achillesziekenhuis.data.database.asDbAgendaslot
 import com.example.achillesziekenhuis.data.database.asDomainAgendaslots
 import com.example.achillesziekenhuis.model.Agendaslot
+import com.example.achillesziekenhuis.model.ListAgendaslot
 import com.example.achillesziekenhuis.network.AgendaslotApiService
 import com.example.achillesziekenhuis.network.asDomainObjects
 import com.example.achillesziekenhuis.network.getAgendaslotByRizivAndDateAsFlow
 import com.example.achillesziekenhuis.network.getAgendaslotsByRRNAsFlow
+import com.example.achillesziekenhuis.network.getAgendaslotsDailyAsFlow
 import com.example.achillesziekenhuis.network.getDoktersAsFlow
 import com.example.achillesziekenhuis.workerUtils.WifiNotificationWorker
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import java.net.SocketTimeoutException
@@ -26,9 +29,11 @@ import java.util.UUID
 
 interface AgendaslotRepository {
 
+    fun getDailyAgendaslots(): Flow<List<ListAgendaslot>>
+
     fun getByRRN(rijksregisternummer: String): Flow<List<Agendaslot>>
 
-    fun getByRizivAndDate(rizivNummer: String, startTime: LocalDateTime): Flow<List<Agendaslot>>
+    fun getByRizivAndDate(rizivNummer: String, startTime: String): Flow<List<Agendaslot>>
 
     suspend fun insertAgendaslot(agendaslot: Agendaslot)
 
@@ -44,6 +49,12 @@ class CachingAgendaslotRepository(
     context: Context,
 ) : AgendaslotRepository {
 
+    override fun getDailyAgendaslots(): Flow<List<ListAgendaslot>> {
+        return agendaslotApiService.getAgendaslotsDailyAsFlow().map {
+            it.asDomainObjects()
+        }
+    }
+
     override fun getByRRN(rijksregisternummer: String): Flow<List<Agendaslot>> {
         return agendaslotDao.getItemByRRN(rijksregisternummer).map {
             it.asDomainAgendaslots()
@@ -56,16 +67,10 @@ class CachingAgendaslotRepository(
 
     // this repo conaints logic to refresh the tasks (remote)
     // sometimes that logic is written in a 'usecase'
-    override fun getByRizivAndDate(rizivNummer: String, startTime: LocalDateTime): Flow<List<Agendaslot>> {
+    override fun getByRizivAndDate(rizivNummer: String, startTime: String): Flow<List<Agendaslot>> = flow {
         // checkes the array of items comming in
         // when empty --> tries to fetch from API
-        return agendaslotDao.getItemByRizivAndDate(rizivNummer, startTime.toString()).map {
-            it.asDomainAgendaslots()
-        }.onEach {
-            if (it.isEmpty()) {
-                refresh()
-            }
-        }
+        emit( agendaslotApiService.getAgendaslotByRizivAndDate(rizivNummer, startTime).asDomainObjects() )
     }
 
     override suspend fun insertAgendaslot(agendaslot: Agendaslot) {
@@ -93,9 +98,9 @@ class CachingAgendaslotRepository(
         try {
             agendaslotApiService.getAgendaslotsByRRNAsFlow("00.12.01-197.80").asDomainObjects().collect {
                     value ->
-                for (task in value) {
+                for (agendaslot in value) {
                     Log.i("TEST", "refresh: $value")
-                    insertAgendaslot(task)
+                    insertAgendaslot(agendaslot)
                 }
             }
         } catch (e: SocketTimeoutException) {
