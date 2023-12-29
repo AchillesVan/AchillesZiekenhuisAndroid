@@ -24,7 +24,7 @@ data class ApiGebruiker(
     val auth0id: String = "",
 )
 
-fun ApiGebruiker.asDomainObject(): Gebruiker {
+fun ApiGebruiker.asDomainListAgendaslot(): Gebruiker {
     return Gebruiker(
         this.rijksregisternummer,
         this.voornaam,
@@ -44,22 +44,22 @@ fun ApiGebruiker.asDomainObject(): Gebruiker {
     )
 }
 
-fun Flow<ApiGebruiker>.asDomainObject(): Flow<Gebruiker> {
+fun Flow<ApiGebruiker>.asDomainListAgendaslot(): Flow<Gebruiker> {
     return this.map {
-        it.asDomainObject()
+        it.asDomainListAgendaslot()
     }
 }
 
-fun List<ApiGebruiker>.asDomainObjects(): List<Gebruiker> {
+fun List<ApiGebruiker>.asDomainAgendaslots(): List<Gebruiker> {
     var domainList = this.map {
-        it.asDomainObject()
+        it.asDomainListAgendaslot()
     }
     return domainList
 }
 
-fun Flow<List<ApiGebruiker>>.asDomainObjects(): Flow<List<Gebruiker>> {
+fun Flow<List<ApiGebruiker>>.asDomainAgendaslots(): Flow<List<Gebruiker>> {
     var domainList = this.map {
-        it.asDomainObjects()
+        it.asDomainAgendaslots()
     }
     return domainList
 }

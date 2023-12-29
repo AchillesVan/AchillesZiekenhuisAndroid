@@ -2,9 +2,6 @@ package com.example.achillesziekenhuis.data
 
 import android.content.Context
 import android.util.Log
-import androidx.work.Constraints
-import androidx.work.NetworkType
-import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.example.achillesziekenhuis.data.database.AgendaslotDao
@@ -13,18 +10,13 @@ import com.example.achillesziekenhuis.data.database.asDomainAgendaslots
 import com.example.achillesziekenhuis.model.Agendaslot
 import com.example.achillesziekenhuis.model.ListAgendaslot
 import com.example.achillesziekenhuis.network.AgendaslotApiService
-import com.example.achillesziekenhuis.network.asDomainObjects
-import com.example.achillesziekenhuis.network.getAgendaslotByRizivAndDateAsFlow
-import com.example.achillesziekenhuis.network.getAgendaslotsByRRNAsFlow
+import com.example.achillesziekenhuis.network.ApiAgendaslot
+import com.example.achillesziekenhuis.network.asDomainAgendaslots
+import com.example.achillesziekenhuis.network.asDomainListAgendaslots
 import com.example.achillesziekenhuis.network.getAgendaslotsDailyAsFlow
-import com.example.achillesziekenhuis.network.getDoktersAsFlow
-import com.example.achillesziekenhuis.workerUtils.WifiNotificationWorker
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
-import java.net.SocketTimeoutException
-import java.time.LocalDateTime
 import java.util.UUID
 
 interface AgendaslotRepository {
@@ -33,11 +25,11 @@ interface AgendaslotRepository {
 
     fun getByRRN(rijksregisternummer: String): Flow<List<Agendaslot>>
 
-    fun getByRizivAndDate(rizivNummer: String, startTime: String): Flow<List<Agendaslot>>
+    fun getByRizivAndDate(date: String, rizivNummer: String): Flow<List<Agendaslot>>
 
-    suspend fun insertAgendaslot(agendaslot: Agendaslot)
+    suspend fun insertAgendaslot(agendaslot: ApiAgendaslot)
 
-    suspend fun refresh()
+//    suspend fun refresh()
 
     var wifiWorkInfo: Flow<WorkInfo>
 
@@ -51,30 +43,23 @@ class CachingAgendaslotRepository(
 
     override fun getDailyAgendaslots(): Flow<List<ListAgendaslot>> {
         return agendaslotApiService.getAgendaslotsDailyAsFlow().map {
-            it.asDomainObjects()
+            it.asDomainListAgendaslots()
         }
     }
 
     override fun getByRRN(rijksregisternummer: String): Flow<List<Agendaslot>> {
         return agendaslotDao.getItemByRRN(rijksregisternummer).map {
             it.asDomainAgendaslots()
-        }.onEach {
-            if (it.isEmpty()) {
-                refresh()
-            }
         }
     }
 
-    // this repo conaints logic to refresh the tasks (remote)
-    // sometimes that logic is written in a 'usecase'
-    override fun getByRizivAndDate(rizivNummer: String, startTime: String): Flow<List<Agendaslot>> = flow {
-        // checkes the array of items comming in
-        // when empty --> tries to fetch from API
-        emit( agendaslotApiService.getAgendaslotByRizivAndDate(rizivNummer, startTime).asDomainObjects() )
+    override fun getByRizivAndDate(date: String, rizivNummer: String): Flow<List<Agendaslot>> = flow {
+        Log.d("AgendaslotRepository", "getByRizivAndDate: $rizivNummer, $date")
+        emit( agendaslotApiService.getAgendaslotByRizivAndDate(riziv = rizivNummer, date = date).asDomainAgendaslots() )
     }
 
-    override suspend fun insertAgendaslot(agendaslot: Agendaslot) {
-        agendaslotDao.insert(agendaslot.asDbAgendaslot())
+    override suspend fun insertAgendaslot(agendaslot: ApiAgendaslot) {
+        agendaslotApiService.postAgendaslot(agendaslot)
     }
 
     private var workID = UUID(1, 2)
@@ -86,25 +71,25 @@ class CachingAgendaslotRepository(
     override var wifiWorkInfo: Flow<WorkInfo> =
         workManager.getWorkInfoByIdFlow(workID)
 
-    override suspend fun refresh() {
-        val constraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
-
-        val requestBuilder = OneTimeWorkRequestBuilder<WifiNotificationWorker>()
-        val request = requestBuilder.setConstraints(constraints).build()
-        workManager.enqueue(request)
-        wifiWorkInfo = workManager.getWorkInfoByIdFlow(request.id)
-
-        // note the actual api request still uses coroutines
-        try {
-            agendaslotApiService.getAgendaslotsByRRNAsFlow("00.12.01-197.80").asDomainObjects().collect {
-                    value ->
-                for (agendaslot in value) {
-                    Log.i("TEST", "refresh: $value")
-                    insertAgendaslot(agendaslot)
-                }
-            }
-        } catch (e: SocketTimeoutException) {
-            // log something
-        }
-    }
+//    override suspend fun refresh() {
+//        val constraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+//
+//        val requestBuilder = OneTimeWorkRequestBuilder<WifiNotificationWorker>()
+//        val request = requestBuilder.setConstraints(constraints).build()
+//        workManager.enqueue(request)
+//        wifiWorkInfo = workManager.getWorkInfoByIdFlow(request.id)
+//
+//        // note the actual api request still uses coroutines
+//        try {
+//            agendaslotApiService.getAgendaslotsByRRNAsFlow("00.12.01-197.80").asDomainAgendaslots().collect {
+//                    value ->
+//                for (agendaslot in value) {
+//                    Log.i("TEST", "refresh: $value")
+//                    insertAgendaslot(agendaslot)
+//                }
+//            }
+//        } catch (e: SocketTimeoutException) {
+//            // log something
+//        }
+//    }
 }

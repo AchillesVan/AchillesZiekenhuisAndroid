@@ -15,7 +15,7 @@ data class ApiDokter(
     var email: String,
 )
 
-fun ApiDokter.asDomainObject(): Dokter {
+fun ApiDokter.asDomainListAgendaslot(): Dokter {
     return Dokter(
         this.riziv_nummer,
         this.voornaam,
@@ -26,22 +26,22 @@ fun ApiDokter.asDomainObject(): Dokter {
     )
 }
 
-fun Flow<ApiDokter>.asDomainObject(): Flow<Dokter> {
+fun Flow<ApiDokter>.asDomainListAgendaslot(): Flow<Dokter> {
     return this.map {
-        it.asDomainObject()
+        it.asDomainListAgendaslot()
     }
 }
 
-fun List<ApiDokter>.asDomainObjects(): List<Dokter> {
+fun List<ApiDokter>.asDomainAgendaslots(): List<Dokter> {
     var domainList = this.map {
-        it.asDomainObject()
+        it.asDomainListAgendaslot()
     }
     return domainList
 }
 
-fun Flow<List<ApiDokter>>.asDomainObjects(): Flow<List<Dokter>> {
+fun Flow<List<ApiDokter>>.asDomainAgendaslots(): Flow<List<Dokter>> {
     var domainList = this.map {
-        it.asDomainObjects()
+        it.asDomainAgendaslots()
     }
     return domainList
 }

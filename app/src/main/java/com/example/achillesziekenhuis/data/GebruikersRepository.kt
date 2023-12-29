@@ -13,7 +13,7 @@ import com.example.achillesziekenhuis.data.database.asDomainGebruiker
 import com.example.achillesziekenhuis.data.database.asDomainGebruikers
 import com.example.achillesziekenhuis.model.Gebruiker
 import com.example.achillesziekenhuis.network.GebruikerApiService
-import com.example.achillesziekenhuis.network.asDomainObjects
+import com.example.achillesziekenhuis.network.asDomainAgendaslots
 import com.example.achillesziekenhuis.network.getGebruikersAsFlow
 import com.example.achillesziekenhuis.workerUtils.WifiNotificationWorker
 import kotlinx.coroutines.flow.Flow
@@ -78,7 +78,7 @@ class CachingGebruikersRepository(
 
         // note the actual api request still uses coroutines
         try {
-            gebruikerApiService.getGebruikersAsFlow().asDomainObjects().collect {
+            gebruikerApiService.getGebruikersAsFlow().asDomainAgendaslots().collect {
                     value ->
                 for (gebruiker in value) {
                     Log.i("TEST", "refresh: $value")

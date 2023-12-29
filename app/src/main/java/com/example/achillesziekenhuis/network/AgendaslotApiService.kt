@@ -3,6 +3,8 @@ package com.example.achillesziekenhuis.network
 import com.example.achillesziekenhuis.model.Agendaslot
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -15,11 +17,11 @@ interface AgendaslotApiService {
     @GET("agendaslots/rrn/{rijksregisternummer}")
     suspend fun getAgendaslotsByRRN(@Path("rijksregisternummer") rijksregisternummer: String): List<ApiAgendaslot>
 
-    @GET("agendaslots/{date}/{rizivNummer}")
-    suspend fun getAgendaslotByRizivAndDate(@Path("rizivNummer") rizivNummer: String, @Path("date") date: String): List<ApiAgendaslot>
+    @GET("agendaslots/{date}/{riziv}")
+    suspend fun getAgendaslotByRizivAndDate(@Path("date") date: String, @Path("riziv") riziv: String): List<ApiAgendaslot>
 
     @POST("agendaslots")
-    suspend fun postAgendaslot(agendaslot: Agendaslot)
+    suspend fun postAgendaslot(@Body agendaslot: ApiAgendaslot): Response<Unit>
 }
 
 fun AgendaslotApiService.getAgendaslotsDailyAsFlow(): Flow<List<ApiListAgendaslot>> = flow {

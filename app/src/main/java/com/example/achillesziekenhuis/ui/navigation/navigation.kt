@@ -43,7 +43,6 @@ fun navComponent(
             route = DokterOverviewScreen.Start.name,
         ) {
             DokterOverview(
-                canNavigateBack = canNavigateBack,
                 navigateUp = navigateUp,
                 goHome = goHome,
                 goToAbout = goToAbout,

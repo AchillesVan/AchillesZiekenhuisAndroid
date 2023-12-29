@@ -9,16 +9,14 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.example.achillesziekenhuis.data.database.DokterDao
 import com.example.achillesziekenhuis.data.database.asDbDokter
-import com.example.achillesziekenhuis.data.database.asDomainDokter
 import com.example.achillesziekenhuis.data.database.asDomainDokters
 import com.example.achillesziekenhuis.model.Dokter
 import com.example.achillesziekenhuis.network.DokterApiService
-import com.example.achillesziekenhuis.network.asDomainObjects
+import com.example.achillesziekenhuis.network.asDomainAgendaslots
 import com.example.achillesziekenhuis.network.getDoktersAsFlow
 import com.example.achillesziekenhuis.workerUtils.WifiNotificationWorker
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import java.net.SocketTimeoutException
 import java.util.UUID
 
@@ -100,7 +98,7 @@ class CachingDokterRepository(
 
         // note the actual api request still uses coroutines
         try {
-            dokterApiService.getDoktersAsFlow().asDomainObjects().collect {
+            dokterApiService.getDoktersAsFlow().asDomainAgendaslots().collect {
                     value ->
                 for (dokter in value) {
                     Log.i("TEST", "refresh: $value")

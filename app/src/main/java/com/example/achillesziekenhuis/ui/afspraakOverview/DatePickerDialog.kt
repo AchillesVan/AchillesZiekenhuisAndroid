@@ -21,13 +21,13 @@ fun ZiekenhuisDatePickerDialog(
 ) {
     val datePickerState = rememberDatePickerState(selectableDates = object : SelectableDates {
         override fun isSelectableDate(utcTimeMillis: Long): Boolean {
-            return utcTimeMillis <= System.currentTimeMillis()
+            return utcTimeMillis > System.currentTimeMillis()
         }
     })
 
     val selectedDate = datePickerState.selectedDateMillis?.let {
         val formatter = SimpleDateFormat("yyyy-MM-dd")
-        formatter.format(Date(it))    } ?: ""
+        formatter.format(Date(it))    } ?: "Selecteer datum"
 
     DatePickerDialog(
         onDismissRequest = { onDismiss() },

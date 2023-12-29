@@ -15,11 +15,11 @@ import com.example.achillesziekenhuis.data.AgendaslotRepository
 import com.example.achillesziekenhuis.data.DoktersRepository
 import com.example.achillesziekenhuis.data.GebruikersRepository
 import com.example.achillesziekenhuis.model.ListAgendaslot
+import com.example.achillesziekenhuis.network.ApiAgendaslot
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -63,136 +63,152 @@ class DokterOverviewViewModel(
     lateinit var wifiWorkerState: StateFlow<WorkerState>
 
     companion object {
-        private var Instance: DokterOverviewViewModel? = null
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
-                if (Instance == null) {
-                    val application = (this[APPLICATION_KEY] as DoktersApplication)
-                    val dokterRepository = application.container.doktersRepository
-                    val agendaslotRepository = application.container.agendaslotRepository
-                    val gebruikersRepository = application.container.gebruikersRepository
-                    Instance = DokterOverviewViewModel(
-                        doktersRepository = dokterRepository,
-                        agendaslotRepository = agendaslotRepository,
-                        gebruikersRepository = gebruikersRepository,
-                        auth0id = application.container.getAuth0Id(),
-                        )
-                }
-                Instance!!
+                val application = (this[APPLICATION_KEY] as DoktersApplication)
+                val dokterRepository = application.container.doktersRepository
+                val agendaslotRepository = application.container.agendaslotRepository
+                val gebruikersRepository = application.container.gebruikersRepository
+                DokterOverviewViewModel(
+                    doktersRepository = dokterRepository,
+                    agendaslotRepository = agendaslotRepository,
+                    gebruikersRepository = gebruikersRepository,
+                    auth0id = application.container.getAuth0Id(),
+                )
             }
         }
     }
 
-    fun getRepoDokters() {
-        try {
-            viewModelScope.launch { doktersRepository.refresh() }
-            val dokters = doktersRepository.getDokters()
-            uiDokterListState = dokters.map { DokterListState(it) }
-                .stateIn(
-                    scope = viewModelScope,
-                    started = SharingStarted.WhileSubscribed(5_000L),
-                    initialValue = DokterListState(),
-                )
-            dokterApiState = DokterApiState.Success
-
-            wifiWorkerState = doktersRepository.wifiWorkInfo.map { WorkerState(it)}.stateIn(
+fun getRepoDokters() {
+    try {
+        viewModelScope.launch { doktersRepository.refresh() }
+        val dokters = doktersRepository.getDokters()
+        uiDokterListState = dokters.map { DokterListState(it) }
+            .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5_000L),
-                initialValue = WorkerState(),
+                initialValue = DokterListState(),
             )
-        } catch (networkError: IOException) {
-            dokterApiState = DokterApiState.Error
-        }
-    }
+        dokterApiState = DokterApiState.Success
 
-    fun getRepoAfdelingen() {
-        try {
-            viewModelScope.launch { doktersRepository.refresh() }
-            uiAfdelingListState = doktersRepository.getAfdelingen().map {
-                AfdelingListState(it)
-            }
-                .stateIn(
-                    scope = viewModelScope,
-                    started = SharingStarted.WhileSubscribed(5_000L),
-                    initialValue = AfdelingListState(),
-                )
+        wifiWorkerState = doktersRepository.wifiWorkInfo.map { WorkerState(it) }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000L),
+            initialValue = WorkerState(),
+        )
+    } catch (networkError: IOException) {
+        dokterApiState = DokterApiState.Error
+    }
+}
+
+fun getRepoAfdelingen() {
+    try {
+        viewModelScope.launch { doktersRepository.refresh() }
+        uiAfdelingListState = doktersRepository.getAfdelingen().map {
+            AfdelingListState(it)
+        }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000L),
+                initialValue = AfdelingListState(),
+            )
 
 //            Log.d("DokterOverviewViewModel", "getRepoAfdelingen: ${uiAfdelingListState.value.afdelingList}")
-            dokterApiState = DokterApiState.Success
+        dokterApiState = DokterApiState.Success
 
-            wifiWorkerState = doktersRepository.wifiWorkInfo.map { WorkerState(it)}.stateIn(
+        wifiWorkerState = doktersRepository.wifiWorkInfo.map { WorkerState(it) }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000L),
+            initialValue = WorkerState(),
+        )
+    } catch (networkError: IOException) {
+        dokterApiState = DokterApiState.Error
+    }
+}
+
+fun getGebruikerByAuth0id(auth0id: String) {
+    try {
+        Log.d("DokterOverviewViewModel", "getGebruikerByAuth0id: $auth0id")
+        viewModelScope.launch { gebruikersRepository.refresh() }
+        uiGebruikerState = gebruikersRepository.getGebruikerByAuth0id(auth0id).map {
+            GebruikerState(it)
+        }
+            .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5_000L),
-                initialValue = WorkerState(),
+                initialValue = GebruikerState(),
             )
-        } catch (networkError: IOException) {
-            dokterApiState = DokterApiState.Error
-        }
-    }
+        gebruikerApiState = GebruikerApiState.Success
 
-    fun getGebruikerByAuth0id(auth0id: String) {
-        try {
-            Log.d("DokterOverviewViewModel", "getGebruikerByAuth0id: $auth0id")
-            viewModelScope.launch { gebruikersRepository.refresh() }
-            uiGebruikerState = gebruikersRepository.getGebruikerByAuth0id(auth0id).map {
-                GebruikerState(it)
+        wifiWorkerState = doktersRepository.wifiWorkInfo.map { WorkerState(it) }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000L),
+            initialValue = WorkerState(),
+        )
+        Log.d(
+            "DokterOverviewViewModel",
+            "End of getGebruikerByAuth0id: ${uiGebruikerState.value.gebruiker}"
+        )
+    } catch (networkError: IOException) {
+        dokterApiState = DokterApiState.Error
+    }
+}
+
+fun getDailyAgendaslots() {
+    try {
+        viewModelScope.launch {
+            agendaslotRepository.getDailyAgendaslots().collect {
+                dailyAgendaslots = it
             }
-                .stateIn(
-                    scope = viewModelScope,
-                    started = SharingStarted.WhileSubscribed(5_000L),
-                    initialValue = GebruikerState(),
-                )
-            gebruikerApiState = GebruikerApiState.Success
+        }
+        afspraakApiState = AgendaslotApiState.Success
 
-            wifiWorkerState = doktersRepository.wifiWorkInfo.map { WorkerState(it)}.stateIn(
+        wifiWorkerState = doktersRepository.wifiWorkInfo.map { WorkerState(it) }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000L),
+            initialValue = WorkerState(),
+        )
+    } catch (networkError: IOException) {
+        afspraakApiState = AgendaslotApiState.Error
+    }
+}
+
+
+fun getAgendaslotsByRizivAndDate(rizivNummer: String, date: String) {
+    try {
+//            viewModelScope.launch { agendaslotRepository.refresh() }
+        Log.d("DokterOverviewViewModel", "getAgendaslotsByRizivAndDate: $rizivNummer, $date")
+        uiAgendaslotListState = agendaslotRepository.getByRizivAndDate(rizivNummer = rizivNummer, date = date)
+            .map { AgendaslotListState(it) }
+            .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5_000L),
-                initialValue = WorkerState(),
+                initialValue = AgendaslotListState(),
             )
-            Log.d("DokterOverviewViewModel", "End of getGebruikerByAuth0id: ${uiGebruikerState.value.gebruiker}")
-        } catch (networkError: IOException) {
-            dokterApiState = DokterApiState.Error
-        }
+        afspraakApiState = AgendaslotApiState.Success
+
+        wifiWorkerState = doktersRepository.wifiWorkInfo.map { WorkerState(it) }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000L),
+            initialValue = WorkerState(),
+        )
+    } catch (networkError: IOException) {
+        afspraakApiState = AgendaslotApiState.Error
     }
+}
 
-    fun getDailyAgendaslots() {
-        try {
-            viewModelScope.launch {
-                agendaslotRepository.getDailyAgendaslots().collect {
-                    dailyAgendaslots = it
-                }
-            }
-            afspraakApiState = AgendaslotApiState.Success
+fun maakAfspraak(agendaslot: ApiAgendaslot) {
+    try {
+        viewModelScope.launch { agendaslotRepository.insertAgendaslot(agendaslot) }
+        afspraakApiState = AgendaslotApiState.Success
 
-            wifiWorkerState = doktersRepository.wifiWorkInfo.map { WorkerState(it)}.stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5_000L),
-                initialValue = WorkerState(),
-            )
-        } catch (networkError: IOException) {
-            afspraakApiState = AgendaslotApiState.Error
-        }
+        wifiWorkerState = doktersRepository.wifiWorkInfo.map { WorkerState(it) }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000L),
+            initialValue = WorkerState(),
+        )
+    } catch (networkError: IOException) {
+        afspraakApiState = AgendaslotApiState.Error
     }
-
-
-    fun getAgendaslotsByRizivAndDate(rizivNummer: String, startTime: String) {
-        try {
-            viewModelScope.launch { agendaslotRepository.refresh() }
-            uiAgendaslotListState = agendaslotRepository.getByRizivAndDate(rizivNummer, startTime).map { AgendaslotListState(it) }
-                .stateIn(
-                    scope = viewModelScope,
-                    started = SharingStarted.WhileSubscribed(5_000L),
-                    initialValue = AgendaslotListState(),
-                )
-            afspraakApiState = AgendaslotApiState.Success
-
-            wifiWorkerState = doktersRepository.wifiWorkInfo.map { WorkerState(it)}.stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5_000L),
-                initialValue = WorkerState(),
-            )
-        } catch (networkError: IOException) {
-            afspraakApiState = AgendaslotApiState.Error
-        }
-    }
+}
 }
