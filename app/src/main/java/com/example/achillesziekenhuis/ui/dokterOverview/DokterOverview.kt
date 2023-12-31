@@ -7,7 +7,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -18,11 +17,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.achillesziekenhuis.ui.ZiekenhuisAppAppBar
-import com.example.achillesziekenhuis.ui.ZiekenhuisBottomAppBar
+import com.example.achillesziekenhuis.ui.ZiekenhuisScaffold
 import com.example.achillesziekenhuis.ui.afspraakOverview.ZiekenhuisDropDown
 import kotlinx.coroutines.launch
 
@@ -33,34 +30,22 @@ fun DokterOverview(
     navigateUp: () -> Unit,
     goHome: () -> Unit,
     goToAbout: () -> Unit,
+    goToLogin: () -> Unit,
     navigate: (String) -> Unit,
 ) {
 
     val dokterApiState = viewModel.dokterApiState
 
-    Scaffold(
+    ZiekenhuisScaffold(
         modifier = modifier,
-        containerColor = Color.Transparent,
-        topBar = {
-            ZiekenhuisAppAppBar(
-                canNavigateBack = false,
-                navigateUp = navigateUp,
-                currentScreenTitle = "",
-            )
-        },
-        bottomBar = {
-            ZiekenhuisBottomAppBar(
-                goHome = goHome,
-                goToAbout = goToAbout,
-            )
-        },
-    ) { innerPadding ->
-
-        Box(
-            modifier = Modifier
-                .padding(innerPadding)
-        )
-        {
+        canNavigateBack = false,
+        navigateUp = navigateUp,
+        currentScreenTitle = "Vind een dokter",
+        goHome = goHome,
+        goToAbout = goToAbout,
+        goToLogin = goToLogin,
+    ) {
+        Box {
             when (dokterApiState) {
                 is DokterApiState.Loading -> Text("Loading...")
                 is DokterApiState.Error -> Text("Couldn't load...")
@@ -113,7 +98,7 @@ fun DokterListComponent(
             state = lazyListState,
             columns = GridCells.Adaptive(minSize = 128.dp),
         ) {
-            items(if(afdelingFilter == defaultDropDownText) dokterListState.dokterList else dokterListState.dokterList.filter { it.afdeling == afdelingFilter }) {
+            items(if (afdelingFilter == defaultDropDownText) dokterListState.dokterList else dokterListState.dokterList.filter { it.afdeling == afdelingFilter }) {
                 DokterItem(
                     dokter = it,
                     navigate = navigate,

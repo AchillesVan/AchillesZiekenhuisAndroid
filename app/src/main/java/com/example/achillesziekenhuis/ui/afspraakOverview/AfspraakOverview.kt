@@ -1,6 +1,5 @@
 package com.example.achillesziekenhuis.ui.afspraakOverview
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -43,6 +42,7 @@ fun AfspraakOverview(
     navigateUp: () -> Unit,
     goHome: () -> Unit,
     goToAbout: () -> Unit,
+    goToLogin: () -> Unit,
 ) {
     val dokter =
         viewModel.uiDokterListState.collectAsState().value.dokterList.find { it.rizivNummer == rizivNummer }
@@ -83,19 +83,12 @@ fun AfspraakOverview(
 
     ZiekenhuisScaffold(
         modifier = modifier,
-        topBar = {
-            ZiekenhuisAppAppBar(
-                canNavigateBack = canNavigateBack,
-                currentScreenTitle = "",
-                navigateUp = navigateUp,
-            )
-        },
-        bottomBar = {
-            ZiekenhuisBottomAppBar(
-                goHome = goHome,
-                goToAbout = goToAbout,
-            )
-        },
+        canNavigateBack = canNavigateBack,
+        navigateUp = navigateUp,
+        currentScreenTitle = "Afspraak maken",
+        goHome = goHome,
+        goToAbout = goToAbout,
+        goToLogin = goToLogin,
     ) {
         Column(
             modifier = Modifier

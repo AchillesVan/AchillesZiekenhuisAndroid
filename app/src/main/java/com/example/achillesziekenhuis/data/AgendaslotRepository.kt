@@ -53,10 +53,14 @@ class CachingAgendaslotRepository(
         }
     }
 
-    override fun getByRizivAndDate(date: String, rizivNummer: String): Flow<List<Agendaslot>> = flow {
-        Log.d("AgendaslotRepository", "getByRizivAndDate: $rizivNummer, $date")
-        emit( agendaslotApiService.getAgendaslotByRizivAndDate(riziv = rizivNummer, date = date).asDomainAgendaslots() )
-    }
+    override fun getByRizivAndDate(date: String, rizivNummer: String): Flow<List<Agendaslot>> =
+        flow {
+            Log.d("AgendaslotRepository", "getByRizivAndDate: $rizivNummer, $date")
+            emit(
+                agendaslotApiService.getAgendaslotByRizivAndDate(riziv = rizivNummer, date = date)
+                    .asDomainAgendaslots()
+            )
+        }
 
     override suspend fun insertAgendaslot(agendaslot: ApiAgendaslot) {
         agendaslotApiService.postAgendaslot(agendaslot)

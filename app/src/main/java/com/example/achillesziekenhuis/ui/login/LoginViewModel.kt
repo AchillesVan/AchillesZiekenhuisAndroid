@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -40,7 +41,7 @@ class LoginViewModel(
         }
     }
 
-    fun onLogin(context: Context, auth: Auth0,  setUser: (Auth0User) -> Unit, onSuccessNavigation: () -> Unit) {
+    fun onLogin(context: Context, auth: Auth0, setUser: (Auth0User) -> Unit, onSuccessNavigation: () -> Unit) {
         WebAuthProvider
             .login(auth)
             .withScheme(context.getString(R.string.com_auth0_scheme))

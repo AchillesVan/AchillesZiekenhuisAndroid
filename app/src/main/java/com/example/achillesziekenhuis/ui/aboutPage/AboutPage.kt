@@ -14,22 +14,16 @@ fun AboutPage(
     navigateUp: () -> Unit,
     goHome: () -> Unit,
     goToAbout: () -> Unit,
+    goToLogin: () -> Unit,
 ) {
     ZiekenhuisScaffold(
         modifier = modifier,
-        topBar = {
-            ZiekenhuisAppAppBar(
-                canNavigateBack = canNavigateBack,
-                currentScreenTitle = "",
-                navigateUp = navigateUp,
-            )
-        },
-        bottomBar = {
-            ZiekenhuisBottomAppBar(
-                goHome = goHome,
-                goToAbout = goToAbout,
-            )
-        },
+        canNavigateBack = canNavigateBack,
+        navigateUp = navigateUp,
+        currentScreenTitle = "Over ons ziekenhuis",
+        goHome = goHome,
+        goToAbout = goToAbout,
+        goToLogin = goToLogin,
     ) {
         Text(
             text = "About",

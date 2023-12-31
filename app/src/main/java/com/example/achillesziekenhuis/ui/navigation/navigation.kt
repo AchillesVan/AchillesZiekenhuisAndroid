@@ -34,6 +34,8 @@ fun navComponent(
         }
         val goToAbout = { navController.navigate(DokterOverviewScreen.About.name) }
 
+        val goToLogin = { navController.navigate(DokterOverviewScreen.Login.name) }
+
         composable(
             route = DokterOverviewScreen.Login.name,
         ) {
@@ -47,6 +49,7 @@ fun navComponent(
                 goHome = goHome,
                 goToAbout = goToAbout,
                 navigate = navController::navigate,
+                goToLogin = goToLogin,
                 )
         }
         composable(
@@ -57,6 +60,7 @@ fun navComponent(
                 navigateUp = navigateUp,
                 goHome = goHome,
                 goToAbout = goToAbout,
+                goToLogin = goToLogin,
             )
         }
         composable(
@@ -68,6 +72,7 @@ fun navComponent(
                 navigateUp = navigateUp,
                 goHome = goHome,
                 goToAbout = goToAbout,
+                goToLogin = goToLogin,
             )
         }
     }
