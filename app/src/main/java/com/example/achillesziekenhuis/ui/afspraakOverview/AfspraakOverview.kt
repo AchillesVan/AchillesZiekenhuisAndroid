@@ -52,7 +52,7 @@ fun AfspraakOverview(
     }
 
     var tijdslot by remember {
-        mutableStateOf("Selecteer tijdstip")
+        mutableStateOf("-- Selecteer tijdstip --")
     }
 
     var errorMessage by remember {

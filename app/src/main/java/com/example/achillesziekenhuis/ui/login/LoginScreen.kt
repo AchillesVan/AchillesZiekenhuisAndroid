@@ -1,8 +1,10 @@
 package com.example.achillesziekenhuis.ui.login
 
 import android.content.res.Configuration
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -11,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -42,28 +45,32 @@ fun LoginScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(all = MaterialTheme.spacing.large),
-        verticalArrangement = Arrangement.spacedBy(space = MaterialTheme.spacing.large),
+        verticalArrangement = Arrangement.SpaceEvenly,
     ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            LoginButton(
-                onClick = {
-                    viewModel.onLogin(
-                        context = context,
-                        auth = auth,
-                        setUser = viewModel::setUser,
-                        onSuccessNavigation = {
-                            navController.navigate(DokterOverviewScreen.Start.name)
-                        },
-                    )
-                },
-                modifier =
-                Modifier.fillMaxWidth(),
-            )
+            Image(painter = painterResource(id = R.drawable.logo), contentDescription = "Logo")
+
         }
+        LoginButton(
+            onClick = {
+                viewModel.onLogin(
+                    context = context,
+                    auth = auth,
+                    setUser = viewModel::setUser,
+                    onSuccessNavigation = {
+                        navController.navigate(DokterOverviewScreen.Start.name)
+                    },
+                )
+            },
+            modifier =
+            Modifier.fillMaxWidth(),
+        )
+
     }
 }
 

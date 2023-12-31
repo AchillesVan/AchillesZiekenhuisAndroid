@@ -95,7 +95,6 @@ dependencies {
     annotationProcessor("androidx.room:room-compiler:$room_version")
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
-    testImplementation("junit:junit:4.13.2")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -104,4 +103,11 @@ dependencies {
     androidTestImplementation("androidx.navigation:navigation-testing:2.7.2")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+    val junitVersion = "4.13.2"
+    val mockitoKotlinVersion = "5.2.1"
+
+    testImplementation("junit:junit:$junitVersion")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:$mockitoKotlinVersion")
 }

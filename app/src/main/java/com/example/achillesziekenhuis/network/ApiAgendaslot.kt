@@ -24,18 +24,21 @@ data class ApiAgendaslot(
             datum: String,
             startTijd: String,
         ): ApiAgendaslot {
-            if (rizivNummer.filter { it.isDigit() }.length != 11) {
+            if (rizivNummer.any { !it.isDigit() } || (rizivNummer.filter { it.isDigit() }.length != 11)) {
                 throw IllegalArgumentException("Ongeldig Rizivnummer.")
-            } else if (rijksregisternummer.filter { it.isDigit() }.length != 11) {
+            } else if (rijksregisternummer.filter { it.isDigit()  }.length != 11 || rijksregisternummer.any { it !in ".-0123456789" }) {
                 throw IllegalArgumentException("Ongeldig Rijksregisternummer.")
             } else if (datum == "Selecteer datum") {
                 throw IllegalArgumentException("Geef een datum in.")
             }
             else if (LocalDate.parse(datum).isBefore(LocalDate.now())) {
                 throw IllegalArgumentException("Ongeldige datum.")
-            } else if (startTijd.length != 8 || !startTijd.contains(":") || startTijd.substring(2, 3) != ":") {
-                throw IllegalArgumentException("Ongeldige start- en eindtijd.")
-            } else {
+            } else if (startTijd.length != 8
+                || LocalTime.parse(startTijd).isBefore(LocalTime.parse("09:00:00"))
+                || LocalTime.parse(startTijd).isAfter(LocalTime.parse("17:00:00"))) {
+                throw IllegalArgumentException("Ongeldige starttijd.")
+            }
+            else {
                 return ApiAgendaslot(
                     0,
                     rizivNummer,
@@ -71,23 +74,3 @@ data class ApiAgendaslot(
         }
         return domainList
     }
-
-@Serializable
-data class ApiListAgendaslot(
-    var value: String = "",
-    var label: String = "",
-)
-
-fun ApiListAgendaslot.asDomainListAgendaslot(): ListAgendaslot {
-    return ListAgendaslot(
-        this.value,
-        this.label,
-    )
-}
-
-fun List<ApiListAgendaslot>.asDomainListAgendaslots(): List<ListAgendaslot> {
-    var domainList = this.map {
-        it.asDomainListAgendaslot()
-    }
-    return domainList
-}
