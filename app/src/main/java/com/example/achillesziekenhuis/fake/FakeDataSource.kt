@@ -1,12 +1,14 @@
 package com.example.achillesziekenhuis.fake
 
-import com.example.achillesziekenhuis.model.ListAgendaslot
 import com.example.achillesziekenhuis.network.ApiAgendaslot
 import com.example.achillesziekenhuis.network.ApiDokter
 import com.example.achillesziekenhuis.network.ApiListAgendaslot
 
+/**
+ * Fake Data Source for testing.
+ */
 object FakeDataSource {
-    val dokter1 = ApiDokter(
+    private val dokter1 = ApiDokter(
         riziv_nummer = "12244933822",
         voornaam = "Jan",
         familienaam = "Janssens",
@@ -15,7 +17,7 @@ object FakeDataSource {
         email = "jan.janssens@achillesziekenhuis.be",
     )
 
-    val dokter2 = ApiDokter(
+    private val dokter2 = ApiDokter(
         riziv_nummer = "24477043644",
         voornaam = "Bert",
         familienaam = "Bertens",
@@ -24,12 +26,15 @@ object FakeDataSource {
         email = "bert.bertens@achillesziekenhuis.be",
     )
 
+    /**
+     * A list of dokters.
+     */
     val dokters = mutableListOf(
         dokter1,
         dokter2,
     )
 
-    val agendaslot1= ApiAgendaslot(
+    private val agendaslot1= ApiAgendaslot(
         id = 1,
         riziv_nummer = "12244933822",
         rijksregisternummer = "00.12.01-197.80",
@@ -37,7 +42,7 @@ object FakeDataSource {
         eind_tijd = "2021-05-01T08:30:00.000Z",
     )
 
-    val agendaslot2= ApiAgendaslot(
+    private val agendaslot2= ApiAgendaslot(
         id = 1,
         riziv_nummer = "12244933822",
         rijksregisternummer = "00.12.01-197.80",
@@ -45,11 +50,17 @@ object FakeDataSource {
         eind_tijd = "2022-10-13T12:00:00.000Z",
     )
 
+    /**
+     * A list of agendaslots.
+     */
     val agendaslots = mutableListOf(
         agendaslot1,
         agendaslot2,
     )
 
+    /**
+     * A list of agendaslots per day.
+     */
     val dailyAgendadlots = listOf(
         ApiListAgendaslot(value = "09:00:00", label = "09:00:00"),
         ApiListAgendaslot(value = "09:30:00", label = "09:30:00"),

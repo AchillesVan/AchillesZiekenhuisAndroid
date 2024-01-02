@@ -11,6 +11,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import java.time.LocalDate
 
+/**
+ * Fake implementation of [AgendaslotRepository] for testing.
+ */
 class FakeApiAgendaslotRepository: AgendaslotRepository {
     override fun getDailyAgendaslots(): Flow<List<ListAgendaslot>> = flow {
         emit(FakeDataSource.dailyAgendadlots.asDomainListAgendaslots())

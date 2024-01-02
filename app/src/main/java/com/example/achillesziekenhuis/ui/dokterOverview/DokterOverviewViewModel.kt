@@ -25,6 +25,9 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.io.IOException
 
+/**
+ * ViewModel for the [DokterOverview] screen and [AfspraakOverview] screen.
+ */
 class DokterOverviewViewModel(
     private val doktersRepository: DoktersRepository,
     private val agendaslotRepository: AgendaslotRepository,
@@ -33,21 +36,48 @@ class DokterOverviewViewModel(
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(DokterOverviewState())
+    /**
+     * [StateFlow] of the current [DokterOverviewState].
+     */
     val uiState: StateFlow<DokterOverviewState> = _uiState.asStateFlow()
 
+    /**
+     * [StateFlow] of the current [DokterListState].
+     */
     lateinit var uiDokterListState: StateFlow<DokterListState>
+    /**
+     * [StateFlow] of the current [AgendaslotListState].
+     */
     lateinit var uiAgendaslotListState: StateFlow<AgendaslotListState>
+    /**
+     * [StateFlow] of the current [AfdelingListState].
+     */
     lateinit var uiAfdelingListState: StateFlow<AfdelingListState>
+    /**
+     * [StateFlow] of the current [GebruikerState].
+     */
     lateinit var uiGebruikerState: StateFlow<GebruikerState>
 
+    /**
+     * List<[ListAgendaslot]> that represents the daily available agendaslots.
+     */
     lateinit var dailyAgendaslots: List<ListAgendaslot>
 
+    /**
+     * [MutableStateFlow] of the current [DokterApiState].
+     */
     var dokterApiState: DokterApiState by mutableStateOf(DokterApiState.Loading)
         private set
 
+    /**
+     * [MutableStateFlow] of the current [AgendaslotApiState].
+     */
     var afspraakApiState: AgendaslotApiState by mutableStateOf(AgendaslotApiState.Loading)
         private set
 
+    /**
+     * [MutableStateFlow] of the current [GebruikerApiState].
+     */
     var gebruikerApiState: GebruikerApiState by mutableStateOf(GebruikerApiState.Loading)
         private set
 
@@ -60,9 +90,15 @@ class DokterOverviewViewModel(
 //        Log.d("DokterOverviewViewModel", "Gebruiker: ${uiGebruikerState.value.gebruiker}")
     }
 
+    /**
+     * [MutableStateFlow] of the current [WorkerState].
+     */
     lateinit var wifiWorkerState: StateFlow<WorkerState>
 
     companion object {
+        /**
+         * Factory that returns a Singleton Object of [DokterOverviewViewModel].
+         */
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as DoktersApplication)
@@ -79,6 +115,9 @@ class DokterOverviewViewModel(
         }
     }
 
+/**
+ * Retrieves all the [Dokter]s from Api or database and stores them in [uiDokterListState].
+ */
 fun getRepoDokters() {
     try {
         viewModelScope.launch { doktersRepository.refresh() }
@@ -101,6 +140,9 @@ fun getRepoDokters() {
     }
 }
 
+/**
+ * Retrieves all the afdelingen from the database and stores them in [uiAfdelingListState].
+ */
 fun getRepoAfdelingen() {
     try {
         viewModelScope.launch { doktersRepository.refresh() }
@@ -126,6 +168,9 @@ fun getRepoAfdelingen() {
     }
 }
 
+/**
+ * Retrieves the [Gebruiker] with a specific Auth0 ID from the database and stores it in [uiGebruikerState].
+ */
 fun getGebruikerByAuth0id(auth0id: String) {
     try {
         Log.d("DokterOverviewViewModel", "getGebruikerByAuth0id: $auth0id")
@@ -154,6 +199,9 @@ fun getGebruikerByAuth0id(auth0id: String) {
     }
 }
 
+/**
+ * Retrieves all the daily agendaslots from the Api and stores them in [dailyAgendaslots].
+ */
 fun getDailyAgendaslots() {
     try {
         viewModelScope.launch {
@@ -174,6 +222,9 @@ fun getDailyAgendaslots() {
 }
 
 
+/**
+ * Gets the [Agendaslot]s of a specific [Dokter] on a specific date from the Api and stores them in [uiAgendaslotListState].
+ */
 fun getAgendaslotsByRizivAndDate(rizivNummer: String, date: String) {
     try {
 //            viewModelScope.launch { agendaslotRepository.refresh() }
@@ -197,6 +248,9 @@ fun getAgendaslotsByRizivAndDate(rizivNummer: String, date: String) {
     }
 }
 
+/**
+ * Posts a new [ApiAgendaslot] to the Api.
+ */
 fun maakAfspraak(agendaslot: ApiAgendaslot) {
     try {
         viewModelScope.launch { agendaslotRepository.insertAgendaslot(agendaslot) }

@@ -23,6 +23,9 @@ import com.example.achillesziekenhuis.ui.ZiekenhuisScaffold
 import com.example.achillesziekenhuis.ui.afspraakOverview.ZiekenhuisDropDown
 import kotlinx.coroutines.launch
 
+/**
+ * Page to overview all [Dokter]s
+ */
 @Composable
 fun DokterOverview(
     modifier: Modifier = Modifier,
@@ -59,6 +62,9 @@ fun DokterOverview(
     }
 }
 
+/**
+ * Component to show a list of [Dokter]s as [DokterItem]s including a [ZiekenhuisDropDown] menu to filter on afdeling
+ */
 @Composable
 fun DokterListComponent(
     modifier: Modifier = Modifier,

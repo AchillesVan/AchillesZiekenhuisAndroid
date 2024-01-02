@@ -10,7 +10,13 @@ import androidx.compose.ui.Modifier
 import com.example.achillesziekenhuis.ui.ZiekenhuisApp
 import com.example.achillesziekenhuis.ui.theme.AchillesZiekenhuisTheme
 
+/**
+ * Main activity for the app.
+ */
 class MainActivity : ComponentActivity() {
+    /**
+     * Create the main activity.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {

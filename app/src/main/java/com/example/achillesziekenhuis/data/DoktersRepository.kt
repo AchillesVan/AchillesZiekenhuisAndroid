@@ -12,7 +12,6 @@ import com.example.achillesziekenhuis.data.database.asDbDokter
 import com.example.achillesziekenhuis.data.database.asDomainDokters
 import com.example.achillesziekenhuis.model.Dokter
 import com.example.achillesziekenhuis.network.DokterApiService
-import com.example.achillesziekenhuis.network.asDomainAgendaslots
 import com.example.achillesziekenhuis.network.asDomainDomaindokters
 import com.example.achillesziekenhuis.network.getDoktersAsFlow
 import com.example.achillesziekenhuis.workerUtils.WifiNotificationWorker
@@ -21,25 +20,55 @@ import kotlinx.coroutines.flow.map
 import java.net.SocketTimeoutException
 import java.util.UUID
 
+/**
+ * Repository for fetching [Dokter]s from the network and storing them on disk.
+ */
 interface DoktersRepository {
-    // all dokters from datasource
+    /**
+     * Returns all dokters from the database.
+     */
     fun getDokters(): Flow<List<Dokter>>
 
+    /**
+     * Returns all afdelingen from the database.
+     */
     fun getAfdelingen(): Flow<List<String>>
 
+    /**
+     * Returns all dokters from a specific afdeling from the database.
+     */
     fun getDoktersByAfdeling(afdeling: String): Flow<List<Dokter>>
 
+    /**
+     * Inserts a dokter into the database.
+     */
     suspend fun insertDokter(dokter: Dokter)
 
+    /**
+     * Updates a dokter in the database.
+     */
     suspend fun updateDokter(dokter: Dokter)
 
+    /**
+     * Deletes a dokter from the database.
+     */
     suspend fun deleteDokter(dokter: Dokter)
 
+    /**
+     * Refreshes the dokters in the database.
+     */
     suspend fun refresh()
 
+    /**
+     * Returns the work info of the wifi notification worker.
+     */
     var wifiWorkInfo: Flow<WorkInfo>
 }
 
+/**
+ * Concrete implementation of the [DoktersRepository] interface. This class is responsible for
+ * fetching dokters from the network and storing them on disk.
+ */
 class CachingDokterRepository(
     private val dokterDao: DokterDao,
     private val dokterApiService: DokterApiService,

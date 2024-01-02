@@ -27,12 +27,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.achillesziekenhuis.network.ApiAgendaslot
-import com.example.achillesziekenhuis.ui.ZiekenhuisAppAppBar
-import com.example.achillesziekenhuis.ui.ZiekenhuisBottomAppBar
 import com.example.achillesziekenhuis.ui.ZiekenhuisScaffold
 import com.example.achillesziekenhuis.ui.dokterOverview.DokterOverviewViewModel
-import java.time.LocalTime
 
+/**
+ * Page to make an appointment with a doctor
+ */
 @Composable
 fun AfspraakOverview(
     modifier: Modifier = Modifier,

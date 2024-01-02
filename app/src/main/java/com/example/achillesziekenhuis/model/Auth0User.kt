@@ -3,15 +3,40 @@ package com.example.achillesziekenhuis.model
 import android.util.Log
 import com.auth0.android.jwt.JWT
 
-data class Auth0User(val idToken: String? = null) {
+/**
+ * Data class that represents an Auth0 user.
+ */
+data class Auth0User(
+    /**
+     * The JWT that represents the user.
+     */
+    val idToken: String? = null) {
 
     private val TAG = "User"
 
+    /**
+     * The user's ID.
+     */
     var id = ""
+    /**
+     * The user's name.
+     */
     var name = ""
+    /**
+     * The user's email address.
+     */
     var email = ""
+    /**
+     * Whether the user's email address has been verified.
+     */
     var emailVerified = ""
+    /**
+     * The URL of the user's profile picture.
+     */
     var picture = ""
+    /**
+     * The time the user's profile was last updated.
+     */
     var updatedAt = ""
 
     init {

@@ -31,6 +31,9 @@ import com.example.achillesziekenhuis.model.Dokter
 import com.example.achillesziekenhuis.ui.navigation.DokterOverviewScreen
 import com.example.achillesziekenhuis.ui.theme.AchillesZiekenhuisTheme
 
+/**
+ * Card to display a doctor
+ */
 @Composable
 fun DokterItem(
     modifier: Modifier = Modifier,
@@ -91,6 +94,9 @@ fun DokterItem(
     }
 }
 
+/**
+ * Text that automatically fits in the available space
+ */
 @Composable
 fun AutoFitText(
     text: String,
@@ -111,6 +117,9 @@ fun AutoFitText(
     )
 }
 
+/**
+ * Preview for [DokterItem]
+ */
 @Preview(showBackground = true)
 @Composable
 fun DokterItemPreview() {
@@ -130,6 +139,9 @@ fun DokterItemPreview() {
     }
 }
 
+/**
+ * Preview for [DokterItem] in dark mode
+ */
 @Preview(showBackground = true, uiMode = UI_MODE_NIGHT_YES)
 @Composable
 fun DokterItemPreviewDark() {

@@ -12,6 +12,9 @@ import com.auth0.android.Auth0
 import com.example.achillesziekenhuis.R
 import com.example.achillesziekenhuis.ui.login.LoginViewModel
 
+/**
+ * Simplified version of [Scaffold] that is used throughout the app.
+ */
 @Composable
 fun ZiekenhuisScaffold(
     modifier: Modifier = Modifier,

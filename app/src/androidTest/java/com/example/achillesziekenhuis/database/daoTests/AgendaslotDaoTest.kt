@@ -2,25 +2,20 @@ package com.example.achillesziekenhuis.database.daoTests
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.espresso.matcher.ViewMatchers.assertThat
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.achillesziekenhuis.data.database.AgendaslotDao
 import com.example.achillesziekenhuis.data.database.DbAgendaslot
 import com.example.achillesziekenhuis.database.TestDatabase
-import com.example.achillesziekenhuis.model.Agendaslot
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.runBlockingTest
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.IOException
-import java.time.LocalDateTime
 
 @RunWith(AndroidJUnit4::class)
-class agendaslotDaoTest {
+class AgendaslotDaoTest {
     private lateinit var agendaslotDao: AgendaslotDao
     private lateinit var db: TestDatabase
 

@@ -17,7 +17,7 @@ fun ApiListAgendaslot.asDomainListAgendaslot(): ListAgendaslot {
 }
 
 fun List<ApiListAgendaslot>.asDomainListAgendaslots(): List<ListAgendaslot> {
-    var domainList = this.map {
+    val domainList = this.map {
         it.asDomainListAgendaslot()
     }
     return domainList

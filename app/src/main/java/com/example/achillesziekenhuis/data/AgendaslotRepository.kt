@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.example.achillesziekenhuis.data.database.AgendaslotDao
-import com.example.achillesziekenhuis.data.database.asDbAgendaslot
 import com.example.achillesziekenhuis.data.database.asDomainAgendaslots
 import com.example.achillesziekenhuis.model.Agendaslot
 import com.example.achillesziekenhuis.model.ListAgendaslot
@@ -13,28 +12,50 @@ import com.example.achillesziekenhuis.network.AgendaslotApiService
 import com.example.achillesziekenhuis.network.ApiAgendaslot
 import com.example.achillesziekenhuis.network.asDomainAgendaslots
 import com.example.achillesziekenhuis.network.asDomainListAgendaslots
+import com.example.achillesziekenhuis.network.getAgendaslotByRizivAndDateAsFlow
 import com.example.achillesziekenhuis.network.getAgendaslotsDailyAsFlow
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import java.util.UUID
 
+/**
+ * Repository for fetching [Agendaslot]s from the network and storing them on disk.
+ */
 interface AgendaslotRepository {
 
+    /**
+     * Returns the start time of all available agendaslots per day.
+     */
     fun getDailyAgendaslots(): Flow<List<ListAgendaslot>>
 
+    /**
+     * Returns the agendaslots of a patient with a given National Insureance number (rijksregisternummer).
+     */
     fun getByRRN(rijksregisternummer: String): Flow<List<Agendaslot>>
 
+    /**
+     * Returns the agendaslots of a doctor with a given riziv number and date.
+     */
     fun getByRizivAndDate(date: String, rizivNummer: String): Flow<List<Agendaslot>>
 
+    /**
+     * Inserts an agendaslot into the database.
+     */
     suspend fun insertAgendaslot(agendaslot: ApiAgendaslot)
 
 //    suspend fun refresh()
 
+    /**
+     * Returns the work info of the wifi notification worker.
+     */
     var wifiWorkInfo: Flow<WorkInfo>
 
 }
 
+/**
+ * Concrete implementation of the [AgendaslotRepository] interface. This class is responsible for
+ * fetching agendaslots from the network and storing them on disk.
+ */
 class CachingAgendaslotRepository(
     private val agendaslotDao: AgendaslotDao,
     private val agendaslotApiService: AgendaslotApiService,
@@ -53,14 +74,14 @@ class CachingAgendaslotRepository(
         }
     }
 
-    override fun getByRizivAndDate(date: String, rizivNummer: String): Flow<List<Agendaslot>> =
-        flow {
-            Log.d("AgendaslotRepository", "getByRizivAndDate: $rizivNummer, $date")
-            emit(
-                agendaslotApiService.getAgendaslotByRizivAndDate(riziv = rizivNummer, date = date)
-                    .asDomainAgendaslots()
-            )
-        }
+    override fun getByRizivAndDate(date: String, rizivNummer: String): Flow<List<Agendaslot>> {
+        Log.d("AgendaslotRepository", "getByRizivAndDate: $rizivNummer, $date")
+        return agendaslotApiService.getAgendaslotByRizivAndDateAsFlow(
+            rizivNummer = rizivNummer,
+            date = date
+        )
+            .asDomainAgendaslots()
+    }
 
     override suspend fun insertAgendaslot(agendaslot: ApiAgendaslot) {
         agendaslotApiService.postAgendaslot(agendaslot)

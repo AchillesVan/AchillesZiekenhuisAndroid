@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -19,14 +18,26 @@ import com.example.achillesziekenhuis.DoktersApplication
 import com.example.achillesziekenhuis.R
 import com.example.achillesziekenhuis.model.Auth0User
 
+/**
+ * ViewModel for the [LoginScreen] screen.
+ */
 class LoginViewModel(
+    /**
+     * Callback to set the user in the [AppContainer].
+     */
     val setUserCallback: (Auth0User) -> Unit,
 ): ViewModel() {
 
+    /**
+     * [Boolean] that indicates if the user is authenticated.
+     */
     var userIsAuthenticated: Boolean by mutableStateOf(false)
 
     companion object {
         private var Instance: LoginViewModel? = null
+        /**
+         * Factory that returns a Singleton instance of [LoginViewModel].
+         */
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 if (Instance == null) {
@@ -41,6 +52,9 @@ class LoginViewModel(
         }
     }
 
+    /**
+     * Login with Auth0.
+     */
     fun onLogin(context: Context, auth: Auth0, setUser: (Auth0User) -> Unit, onSuccessNavigation: () -> Unit) {
         WebAuthProvider
             .login(auth)
@@ -63,6 +77,9 @@ class LoginViewModel(
             )
     }
 
+    /**
+     * Logout with Auth0.
+     */
     fun onLogOut(context: Context, auth: Auth0, onSuccessNavigation: () -> Unit) {
         WebAuthProvider.logout(auth)
             .withScheme(context.getString(R.string.com_auth0_scheme))
@@ -80,6 +97,9 @@ class LoginViewModel(
             )
     }
 
+    /**
+     * Set the user in the [AppContainer].
+     */
     fun setUser(auth0User: Auth0User) {
         setUserCallback(auth0User)
     }

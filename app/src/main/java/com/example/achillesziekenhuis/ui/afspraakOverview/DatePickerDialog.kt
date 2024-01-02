@@ -13,6 +13,9 @@ import java.util.Date
 
 
 
+/**
+ * Simplified date picker dialog.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ZiekenhuisDatePickerDialog(

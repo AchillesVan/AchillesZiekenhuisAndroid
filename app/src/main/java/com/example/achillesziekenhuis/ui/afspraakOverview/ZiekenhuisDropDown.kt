@@ -18,6 +18,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.achillesziekenhuis.ui.theme.AchillesZiekenhuisTheme
 
+/**
+ * Simplified dropdown menu
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ZiekenhuisDropDown(
@@ -74,6 +77,9 @@ fun ZiekenhuisDropDown(
     }
 }
 
+/**
+ * Preview for [ZiekenhuisDropDown]
+ */
 @Preview
 @Composable
 fun ZiekenhuisDropDownPreview() {

@@ -3,10 +3,11 @@ package com.example.achillesziekenhuis.ui.aboutPage
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.example.achillesziekenhuis.ui.ZiekenhuisAppAppBar
-import com.example.achillesziekenhuis.ui.ZiekenhuisBottomAppBar
 import com.example.achillesziekenhuis.ui.ZiekenhuisScaffold
 
+/**
+ * About page
+ */
 @Composable
 fun AboutPage(
     modifier: Modifier = Modifier,

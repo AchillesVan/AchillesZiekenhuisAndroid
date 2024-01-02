@@ -21,21 +21,43 @@ import kotlinx.coroutines.flow.map
 import java.net.SocketTimeoutException
 import java.util.UUID
 
+/**
+ * Repository for fetching [Gebruiker]s from the network and storing them on disk.
+ */
 interface GebruikersRepository {
 
+    /**
+     * Returns all gebruikers from the database.
+     */
     fun getAllGebruikers(): Flow<List<Gebruiker>>
 
+    /**
+     * Returns a gebruiker by their auth0id.
+     */
     fun getGebruikerByAuth0id(auth0id: String): Flow<Gebruiker>
 
 //    fun getGebruikerByAuth0id(auth0id: String): Gebruiker
 
+    /**
+     * Inserts a gebruiker into the database.
+     */
     suspend fun insertGebruiker(gebruiker: Gebruiker)
 
+    /**
+     * Refreshes the gebruikers in the database.
+     */
     suspend fun refresh()
 
+    /**
+     * Returns the work info of the wifi notification worker.
+     */
     var wifiWorkInfo: Flow<WorkInfo>
 }
 
+/**
+ * Concrete implementation of the [GebruikersRepository] interface. This class is responsible for
+ * fetching gebruikers from the network and storing them on disk.
+ */
 class CachingGebruikersRepository(
     private val gebruikerDao: GebruikerDao,
     private val gebruikerApiService: GebruikerApiService,

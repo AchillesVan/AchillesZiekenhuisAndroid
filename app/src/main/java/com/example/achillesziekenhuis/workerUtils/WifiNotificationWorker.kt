@@ -17,6 +17,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
 private const val TAG = "WithWifiWorker"
+/**
+ * Worker that shows a notification when the device is connected to wifi.
+ */
 class WifiNotificationWorker(
     context: Context,
     params: WorkerParameters,

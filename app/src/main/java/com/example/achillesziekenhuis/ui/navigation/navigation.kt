@@ -10,8 +10,11 @@ import com.example.achillesziekenhuis.ui.afspraakOverview.AfspraakOverview
 import com.example.achillesziekenhuis.ui.dokterOverview.DokterOverview
 import com.example.achillesziekenhuis.ui.login.LoginScreen
 
+/**
+ * Component that handles the navigation in the app.
+ */
 @Composable
-fun navComponent(
+fun NavComponent(
     navController: NavHostController,
     modifier: Modifier = Modifier,
 ) {

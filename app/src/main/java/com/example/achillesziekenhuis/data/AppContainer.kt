@@ -16,14 +16,36 @@ import okhttp3.Request
 import okhttp3.Response
 import retrofit2.Retrofit
 
+/**
+ * Dependency provider for the repositories.
+ */
 interface AppContainer {
+    /**
+     * Returns a singleton instance of the [DoktersRepository].
+     */
     val doktersRepository: DoktersRepository
+    /**
+     * Returns a singleton instance of the [AgendaslotRepository].
+     */
     val agendaslotRepository: AgendaslotRepository
+    /**
+     * Returns a singleton instance of the [GebruikersRepository].
+     */
     val gebruikersRepository: GebruikersRepository
+    /**
+     * Sets the current user.
+     */
     fun setUser(auth0User: Auth0User)
+    /**
+     * Returns the current user's Auth0 ID.
+     */
     fun getAuth0Id(): String
 }
 
+/**
+ * Concrete implementation of the [AppContainer] interface. This class is responsible for
+ * providing the repositories.
+ */
 class DefaultAppContainer(private val context: Context) : AppContainer {
 
     private val BASE_URL = context.getString(R.string.BASE_URL)
