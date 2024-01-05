@@ -44,7 +44,7 @@ data class ApiAgendaslot(
             datum: String,
             startTijd: String,
         ): ApiAgendaslot {
-            if (rizivNummer.any { !it.isDigit() } || (rizivNummer.filter { it.isDigit() }.length != 11)) {
+            if (rizivNummer.any { !it.isDigit() || it !in ".-" } || (rizivNummer.filter { it.isDigit() }.length != 11)) {
                 throw IllegalArgumentException("Ongeldig Rizivnummer.")
             } else if (rijksregisternummer.filter { it.isDigit() }.length != 11 || rijksregisternummer.any { it !in ".-0123456789" }) {
                 throw IllegalArgumentException("Ongeldig Rijksregisternummer.")
